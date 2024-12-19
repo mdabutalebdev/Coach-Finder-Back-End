@@ -143,8 +143,8 @@ const AddInfo = () => {
     { title: "3 Idiots", year: 2009 },
     { title: "Monty Python and the Holy Grail", year: 1975 },
   ];
-  return (
-    <div className="container py-20">
+  return ( 
+    <div className=" py-8 pl-8 pr-20 w-full"> 
       <div className="flex justify-between py-3 pl-14 w-full bg-[#F9C1C5] rounded-[8px] mb-8 relative">
         <Idea className="absolute top-3 left-5" />
         <p>
@@ -222,7 +222,7 @@ const AddInfo = () => {
             <div className="flex gap-2 mt-6">
               <div
                 onClick={() => setswipe(!swipe)}
-                className={`h-[20px] w-9  bg-blue-600 rounded-2xl relative        before:h-4 before:w-4 before:rounded-full before:bg-white before:absolute before:top-1/2 before:-translate-y-1/2  ${
+                className={`h-[20px] w-9  bg-blue-600 rounded-2xl relative before:h-4 before:w-4 before:rounded-full before:bg-white before:absolute before:top-1/2 before:-translate-y-1/2 ${
                   swipe
                     ? "before:right-0 before:duration-300"
                     : "before:left-0 before:duration-300"
