@@ -1,4 +1,6 @@
 import React from "react"
+import AddInfo from "./Components/addInfo"
+import Login from "./Components/Login"
 
 
 function App() {
@@ -6,9 +8,8 @@ function App() {
 
   return (
     <>
-         <h1 className="text-3xl font-bold underline font-Lato">
-      Hello world!
-    </h1>
+      <Login />    
+   <AddInfo />
         
     </>
   )
