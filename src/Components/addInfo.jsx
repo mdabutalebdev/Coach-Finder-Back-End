@@ -90,23 +90,43 @@ const AddInfo = () => {
 
     async function infoFunc() {
       try {
-        const res = await fetch("http://77.37.74.82:5000/api/groups/create-group", {
-          method: 'POST',
-          body: JSON.stringify({ key: 'value' }),
-          headers: {
-            "Content-Type": "application/json",
-            'Authorization': `Bearer ${token}`
-          },
-        })
-
-        let response = await res.json()
+        const res = await axios.post("http://77.37.74.82:5000/api/groups/create-group",
+          groupInfo,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              'Authorization': `Bearer ${token}`
+            },
+          })
+        let response = await res.data
+        console.log(response);
         return response
-
       }
       catch (error) {
-        throw Error(error)
+        throw Error(error.message)
       }
     }
+
+    // async function infoFunc() {
+    //   try {
+    //     const res = await fetch("http://77.37.74.82:5000/api/groups/create-group", {
+    //       method: 'POST',
+    //       body: JSON.stringify({ key: 'value' }),
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //         'Authorization': `Bearer ${token}`
+    //       },
+    //     })
+
+    //     let response = await res.json()
+    //     console.log(response);
+    //     return response
+
+    //   }
+    //   catch (error) {
+    //     throw Error(error.messaage)
+    //   }
+    // }
 
     infoFunc()
 

@@ -4,7 +4,7 @@ import ErrorPage from "./ErrorPage";
 import Sidebar from "./Sidebar";
 import GroupPage from "./GroupPage";
 import Logo from "../../../assets/log_logo.png";
- 
+
 
 const PageCategory = () => {
   const { category } = useParams();
@@ -16,8 +16,8 @@ const PageCategory = () => {
     category == "analytics" ||
     category == "reviews" ||
     category == "settings" ||
-    category == "archive"  
-  
+    category == "archive"
+
   ) {
     return (
       <div>
@@ -33,7 +33,6 @@ const PageCategory = () => {
 
           {category == "groups" && <GroupPage />}
         </div>
-                  
       </div>
     );
   } else {
