@@ -92,7 +92,7 @@ const AddInfo = () => {
       try {
         const res = await fetch("http://77.37.74.82:5000/api/groups/create-group", {
           method: 'POST',
-          body: JSON.stringify({ key: 'value' }),
+          body: formData,
           headers: {
             "Content-Type": "application/json",
             'Authorization': `Bearer ${token}`
