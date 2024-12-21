@@ -10,23 +10,29 @@ import Button from "./layouts/Button";
 import Idea from "../assets/icon/Idea";
 import Cross from "../assets/icon/Cross";
 import axios from "axios";
+import Swal from "sweetalert2";
 const AddInfo = () => {
+  const adminId = localStorage.getItem("adminId");
   const [swipe, setswipe] = useState(false);
+
   const [groupInfo, setgroupInfo] = useState({
     group_name: "",
     country: "",
     city: "",
-    group_industry: [],
-    group_primary_goal: [],
-    group_focus_area: [],
-    group_key_topics: [],
+    group_industry: "",
+    group_primary_goal: "",
+    group_focus_area: "",
+    group_key_topics: "",
     description: "",
     meeting_format: "",
     hiring_price: "",
     registration_link: "",
-    group_logo: "",
+    group_logo: null,
     group_video: "",
     review_status: false,
+    group_createdBy: adminId,
+    group_rating: [],
+    group_size: 0,
   });
 
   const first = [
@@ -36,8 +42,7 @@ const AddInfo = () => {
     { title: "Manufacturing", year: 2008 },
     { title: "Real Estate", year: 1957 },
     { title: "Education", year: 1993 },
-    { title: "Media", year: 1994 }
-
+    { title: "Media", year: 1994 },
   ];
   const second = [
     { title: "Networking", year: 1994 },
@@ -47,8 +52,7 @@ const AddInfo = () => {
     { title: "Accountability", year: 1957 },
     { title: "Problem-solving", year: 1993 },
     { title: "Exploring new markets", year: 1994 },
-    { title: "Mentorship", year: 1994 }
-
+    { title: "Mentorship", year: 1994 },
   ];
   const third = [
     { title: "Integrity", year: 1994 },
@@ -57,8 +61,7 @@ const AddInfo = () => {
     { title: "Growth mindset", year: 2008 },
     { title: "Accountability", year: 1957 },
     { title: "Transparency", year: 1993 },
-    { title: "Inclusivity", year: 1994 }
-
+    { title: "Inclusivity", year: 1994 },
   ];
   const forth = [
     { title: "Scaling the business", year: 1994 },
@@ -68,46 +71,57 @@ const AddInfo = () => {
     { title: "Personal development", year: 1957 },
     { title: "Operations efficiency", year: 1993 },
     { title: "Sales and marketing", year: 1994 },
-    { title: "Innovation and product development", year: 1994 }
-
+    { title: "Innovation and product development", year: 1994 },
   ];
 
   const inputChange = (e) => {
-    setgroupInfo({ ...groupInfo, [e.target.name]: e.target.value })
-  }
-
-  const reviewsStatus = (e) => {
-    setswipe(!swipe)
-    setgroupInfo({ ...groupInfo, review_status: !swipe })
+    setgroupInfo({ ...groupInfo, [e.target.name]: e.target.value });
   };
 
+  const reviewsStatus = () => {
+    setswipe(!swipe);
+    setgroupInfo({ ...groupInfo, review_status: !swipe });
+  };
 
   const infoSubmit = (e) => {
     e.preventDefault();
-    
-    let token = localStorage.getItem("adminAuthToken")
+
+    console.log("groupInfo", groupInfo);
+
+    let token = localStorage.getItem("adminAuthToken");
     async function infoFunc() {
       try {
-        const res = await axios.post("http://77.37.74.82:5000/api/groups/create-group",
+        const res = await axios.post(
+          "http://localhost:5000/api/groups/create-group",
           groupInfo,
           {
             headers: {
               "Content-Type": "application/json",
-              'Authorization': `Bearer ${token}`
+              Authorization: `Bearer ${token}`,
             },
-          })
-        let response = await res.data
+          }
+        );
+        let response = await res.data;
+        if (response) {
+          Swal.fire({
+            title: response?.message,
+            icon: "success",
+          });
+        }
         console.log(response);
-        return response
+        return response;
+      } catch (error) {
+        Swal.fire({
+          title: "Failed to add group!",
+          text: error.message,
+          icon: "error",
+        });
+        throw Error(error.message);
       }
-      catch (error) {
-        throw Error(error.message)
-      }
-    }
+    }
 
-    infoFunc()
-
-  }
+    infoFunc();
+  };
 
   return (
     <div className=" py-8 pl-8 pr-20 w-full">
@@ -137,7 +151,7 @@ const AddInfo = () => {
               </h3>
 
               <div className="mt-6">
-                <label htmlFor="group_name"> Group Name *</label>
+                <label htmlFor="group_name"> Group Name*</label>
                 <br />
                 <input
                   onChange={inputChange}
@@ -154,9 +168,8 @@ const AddInfo = () => {
               </h3>
 
               <div className="flex gap-10">
-
                 <div className="mt-6">
-                  <label htmlFor="country">COUNTRY *</label>
+                  <label htmlFor="country">COUNTRY*</label>
                   <br />
                   <select
                     onChange={inputChange}
@@ -173,7 +186,7 @@ const AddInfo = () => {
                 </div>
 
                 <div className="mt-6">
-                  <label htmlFor="city">CITY *</label>
+                  <label htmlFor="city">CITY*</label>
                   <br />
                   <input
                     onChange={inputChange}
@@ -184,9 +197,7 @@ const AddInfo = () => {
                     className="font-normal text-[12px] text-[#1A1A1A] opacity-60 border border-[#A2A2A2] py-2 w-[174px] h-[38px] rounded-[8px] outline-none mt-2 px-2"
                   />
                 </div>
-
               </div>
-
             </div>
 
             <div className="">
@@ -197,36 +208,57 @@ const AddInfo = () => {
               <div className="">
                 <label htmlFor="logo">
                   <div className="flex gap-2 mt-6">
-
                     <Plus className="mt-1" />
                     <h4 className="font-semibold text-[12px] text-[#5587FF]">
                       Add Logo
                     </h4>
                   </div>
                 </label>
-                <input onChange={(e) => setgroupInfo({ ...groupInfo, group_logo: e.target.files[0] })} type="file" id="logo" className="hidden" accept="image/*" />
+                <input
+                  onChange={(e) =>
+                    setgroupInfo({
+                      ...groupInfo,
+                      group_logo: e.target.files[0]?.name,
+                    })
+                  }
+                  type="file"
+                  id="logo"
+                  className="hidden"
+                  accept="image/*"
+                />
               </div>
 
               <div className="">
                 <label htmlFor="logo">
                   <div className="flex gap-2 mt-6">
-
                     <Plus className="mt-1" />
                     <h4 className="font-semibold text-[12px] text-[#5587FF]">
                       Add Video
                     </h4>
                   </div>
                 </label>
-                <input type="file" id="logo" className="hidden" onChange={(e) => setgroupInfo({ ...groupInfo, group_video: e.target.files[0] })} accept="video/*" />
+                <input
+                  type="file"
+                  id="logo"
+                  className="hidden"
+                  onChange={(e) =>
+                    setgroupInfo({
+                      ...groupInfo,
+                      group_video: e.target.files[0],
+                    })
+                  }
+                  accept="video/*"
+                />
               </div>
 
               <div className="flex gap-2 mt-6">
                 <div
                   onClick={reviewsStatus}
-                  className={`h-[20px] w-9  rounded-2xl relative before:h-4 before:w-4 before:rounded-full before:bg-white before:absolute before:top-1/2 before:-translate-y-1/2 ${swipe
-                    ? "before:right-[2px] before:duration-300 bg-blue-600"
-                    : "before:left-[2px] before:duration-300 bg-gray-400"
-                    }`}
+                  className={`h-[20px] w-9  rounded-2xl relative before:h-4 before:w-4 before:rounded-full before:bg-white before:absolute before:top-1/2 before:-translate-y-1/2 ${
+                    swipe
+                      ? "before:right-[2px] before:duration-300 bg-blue-600"
+                      : "before:left-[2px] before:duration-300 bg-gray-400"
+                  }`}
                 ></div>
                 <h3 className="font-semibold text-[12px] text-primaryColor">
                   Enable reviews
@@ -242,7 +274,6 @@ const AddInfo = () => {
             </h3>
 
             <div className="grid grid-cols-2">
-
               <div className="mt-6">
                 <label htmlFor="group_industry" className="">
                   Industry*
@@ -252,18 +283,20 @@ const AddInfo = () => {
                   <Autocomplete
                     className="!rounded-[8px]"
                     onChange={(event, newValue) => {
-                      setgroupInfo({ ...groupInfo, group_industry: newValue })
+                      setgroupInfo({ ...groupInfo, group_industry: newValue });
                     }}
                     multiple
                     limitTags={2}
                     id="multiple-limit-tags group_industry"
                     options={first}
                     getOptionLabel={(option) => option.title}
-                    defaultValue={[
-
-                    ]}
+                    defaultValue={[]}
                     renderInput={(params) => (
-                      <TextField name="group_industry" {...params} placeholder="select" />
+                      <TextField
+                        name="group_industry"
+                        {...params}
+                        placeholder="select"
+                      />
                     )}
                     sx={{ width: "500px" }}
                   />
@@ -279,7 +312,10 @@ const AddInfo = () => {
                 <div className="mt-3">
                   <Autocomplete
                     onChange={(event, newValue) => {
-                      setgroupInfo({ ...groupInfo, group_primary_goal: newValue })
+                      setgroupInfo({
+                        ...groupInfo,
+                        group_primary_goal: newValue,
+                      });
                     }}
                     name="group_primary_goal"
                     multiple
@@ -287,9 +323,7 @@ const AddInfo = () => {
                     id="multiple-limit-tags group_primary_goal"
                     options={second}
                     getOptionLabel={(option) => option.title}
-                    defaultValue={[
-
-                    ]}
+                    defaultValue={[]}
                     renderInput={(params) => (
                       <TextField {...params} placeholder="select" />
                     )}
@@ -297,7 +331,6 @@ const AddInfo = () => {
                     className="rounded-3xl outline-none"
                   />
                 </div>
-
               </div>
               {/* ------------------ */}
               <div className="mt-6">
@@ -308,7 +341,10 @@ const AddInfo = () => {
                 <div className="mt-3">
                   <Autocomplete
                     onChange={(event, newValue) => {
-                      setgroupInfo({ ...groupInfo, group_focus_area: newValue })
+                      setgroupInfo({
+                        ...groupInfo,
+                        group_focus_area: newValue,
+                      });
                     }}
                     name="group_focus_area"
                     multiple
@@ -316,16 +352,13 @@ const AddInfo = () => {
                     id="multiple-limit-tags group_focus_area"
                     options={third}
                     getOptionLabel={(option) => option.title}
-                    defaultValue={[
-
-                    ]}
+                    defaultValue={[]}
                     renderInput={(params) => (
                       <TextField {...params} placeholder="select" />
                     )}
                     sx={{ width: "500px" }}
                   />
                 </div>
-
               </div>
 
               {/* ----------------- */}
@@ -337,7 +370,10 @@ const AddInfo = () => {
                 <div className="mt-3">
                   <Autocomplete
                     onChange={(event, newValue) => {
-                      setgroupInfo({ ...groupInfo, group_key_topics: newValue })
+                      setgroupInfo({
+                        ...groupInfo,
+                        group_key_topics: newValue,
+                      });
                     }}
                     name="group_key_topics"
                     className=" "
@@ -346,18 +382,19 @@ const AddInfo = () => {
                     id="multiple-limit-tags group_key_topics"
                     options={forth}
                     getOptionLabel={(option) => option.title}
-                    defaultValue={[
-                    ]}
+                    defaultValue={[]}
                     renderInput={(params) => (
-                      <TextField {...params} placeholder="select" className="" />
+                      <TextField
+                        {...params}
+                        placeholder="select"
+                        className=""
+                      />
                     )}
                     sx={{ width: "500px" }}
                   />
                 </div>
-
               </div>
               {/* ---------------------- */}
-
             </div>
           </div>
 
@@ -382,7 +419,6 @@ const AddInfo = () => {
               cols="30"
               className="border w-full rounded-[8px] outline-none mt-3 font-medium text-[12px] text-[#949494] pl-[23px] pr-8 pt-[20px]"
             />
-
           </div>
 
           <div className="">
@@ -393,7 +429,12 @@ const AddInfo = () => {
             <div className="">
               <FormControl>
                 <RadioGroup
-                  onChange={(e) => setgroupInfo({ ...groupInfo, meeting_format: e.target.value })}
+                  onChange={(e) =>
+                    setgroupInfo({
+                      ...groupInfo,
+                      meeting_format: e.target.value,
+                    })
+                  }
                   row
                   aria-labelledby="demo-row-radio-buttons-group-label"
                   name="row-radio-buttons-group"
@@ -416,9 +457,7 @@ const AddInfo = () => {
                 </RadioGroup>
               </FormControl>
             </div>
-
           </div>
-
 
           <div className="mt-6">
             <label htmlFor="hiring_price">Pricing*</label>

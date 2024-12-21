@@ -5,9 +5,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 
-
-
-
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
@@ -39,6 +36,7 @@ const Login = () => {
         });
       }
       localStorage.setItem("adminAuthToken", response.data.token);
+      localStorage.setItem("adminId", response?.data?.user?.id);
       navigate("/dashboard");
     } catch (err) {
       if (err) {
