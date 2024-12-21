@@ -6,7 +6,7 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
-import Button from "./layouts/Button";
+ 
 import Idea from "../assets/icon/Idea";
 import Cross from "../assets/icon/Cross";
 import axios from "axios";
@@ -475,6 +475,7 @@ const AddInfo = () => {
               </p>
             </div>
           </div>
+
 
           <div className="mt-6">
             <label htmlFor="registration_link">Registration link*</label>
