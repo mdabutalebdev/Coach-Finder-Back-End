@@ -1,6 +1,6 @@
 import React from "react";
 import Sidebar from "./naim/Component/Sidebar";
-import AddInfo from "../Components/AddInfo";
+import AddInfo from "../Components/addInfo";
 import Logo from "../assets/log_logo.png";
 
 const AddInfoPage = () => {

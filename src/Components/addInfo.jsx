@@ -11,9 +11,16 @@ import Idea from "../assets/icon/Idea";
 import Cross from "../assets/icon/Cross";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { Close } from "./naim/icons";
+
+
+
 const AddInfo = () => {
   const adminId = localStorage.getItem("adminId");
   const [swipe, setswipe] = useState(false);
+
+  const [imgUrl, setimgUrl] = useState(false);
+  const [videoUrl, setvideoUrl] = useState(false);
 
   const [groupInfo, setgroupInfo] = useState({
     group_name: "",
@@ -35,44 +42,10 @@ const AddInfo = () => {
     group_size: 0,
   });
 
-  const first = [
-    { title: "Finance", year: 1994 },
-    { title: "Healthcare", year: 1972 },
-    { title: "Consumer Goods", year: 1974 },
-    { title: "Manufacturing", year: 2008 },
-    { title: "Real Estate", year: 1957 },
-    { title: "Education", year: 1993 },
-    { title: "Media", year: 1994 },
-  ];
-  const second = [
-    { title: "Networking", year: 1994 },
-    { title: "Scaling my business", year: 1972 },
-    { title: "Personal development", year: 1974 },
-    { title: "Leadership insights", year: 2008 },
-    { title: "Accountability", year: 1957 },
-    { title: "Problem-solving", year: 1993 },
-    { title: "Exploring new markets", year: 1994 },
-    { title: "Mentorship", year: 1994 },
-  ];
-  const third = [
-    { title: "Integrity", year: 1994 },
-    { title: "Innovation", year: 1972 },
-    { title: "Collaboration", year: 1974 },
-    { title: "Growth mindset", year: 2008 },
-    { title: "Accountability", year: 1957 },
-    { title: "Transparency", year: 1993 },
-    { title: "Inclusivity", year: 1994 },
-  ];
-  const forth = [
-    { title: "Scaling the business", year: 1994 },
-    { title: "Managing teams", year: 1972 },
-    { title: "Fundraising", year: 1974 },
-    { title: "Market competition", year: 2008 },
-    { title: "Personal development", year: 1957 },
-    { title: "Operations efficiency", year: 1993 },
-    { title: "Sales and marketing", year: 1994 },
-    { title: "Innovation and product development", year: 1994 },
-  ];
+  const first = ["Finance", "Healthcare", "Consumer Goods", "Manufacturing", "Real Estate", "Education", "Media"];
+  const second = ["Networking", "Scaling my business", "Personal development", "Leadership insights", "Accountability", "Problem-solving", "Exploring new markets", "Mentorship"];
+  const third = ["Integrity", "Innovation", "Collaboration", "Growth mindset", "Accountability", "Transparency", "Inclusivity"];
+  const forth = ["Scaling the business", "Managing teams", "Fundraising", "Market competition", "Personal development", "Operations efficiency", "Sales and marketing", "Innovation and product development"];
 
   const inputChange = (e) => {
     setgroupInfo({ ...groupInfo, [e.target.name]: e.target.value });
@@ -83,6 +56,34 @@ const AddInfo = () => {
     setgroupInfo({ ...groupInfo, review_status: !swipe });
   };
 
+  const handleImage = (e) => {
+    const file = e.target.files[0];
+    setgroupInfo({ ...groupInfo, group_logo: e.target.files[0] })
+    const imagePath = URL.createObjectURL(file);
+    setimgUrl(imagePath)
+  }
+    console.log(groupInfo);
+    
+  const imgClose = () => {
+    setgroupInfo({ ...groupInfo, group_logo: "" })
+    setimgUrl(false)
+  }
+
+  const handleVideo = (e) => {
+    const file = e.target.files[0];
+    console.log(file);
+
+    setgroupInfo({ ...groupInfo, group_video: e.target.files[0] })
+    const videoPath = URL.createObjectURL(file);
+    setvideoUrl(videoPath)
+  }
+
+  const VideoClose = () => {
+    setgroupInfo({ ...groupInfo, group_video: "" })
+    setvideoUrl(false)
+  }
+
+
   const infoSubmit = (e) => {
     e.preventDefault();
 
@@ -90,7 +91,7 @@ const AddInfo = () => {
     async function infoFunc() {
       try {
         const res = await axios.post(
-          "http://localhost:5000/api/groups/create-group",
+          "http://77.37.74.82:5000/api/groups/create-group",
           groupInfo,
           {
             headers: {
@@ -212,18 +213,19 @@ const AddInfo = () => {
                     </h4>
                   </div>
                 </label>
-                <input
-                  onChange={(e) =>
-                    setgroupInfo({
-                      ...groupInfo,
-                      group_logo: e.target.files[0]?.name,
-                    })
-                  }
-                  type="file"
-                  id="logo"
-                  className="hidden"
-                  accept="image/*"
-                />
+                <input onChange={handleImage} type="file" id="logo" className="hidden" accept="image/*" />
+
+                {
+                  imgUrl ?
+                    <div className="w-[100px] h-[80px] border mt-5 relative">
+                      <img src={`${imgUrl}`} alt="" className="w-full h-full" />
+
+                      <div onClick={imgClose} className="w-[26px] h-[26px] bg-[#F31A1A] rounded-full flex items-center justify-center  absolute -top-3 -right-3">
+                        <Close className={"!stroke-white !w-[10px] !h-[10px]"} />
+                      </div>
+                    </div> :
+                    false
+                }
               </div>
 
               <div className="">
@@ -235,28 +237,28 @@ const AddInfo = () => {
                     </h4>
                   </div>
                 </label>
-                <input
-                  type="file"
-                  id="logo"
-                  className="hidden"
-                  onChange={(e) =>
-                    setgroupInfo({
-                      ...groupInfo,
-                      group_video: e.target.files[0],
-                    })
-                  }
-                  accept="video/*"
-                />
+                <input type="file" id="video" className="hidden" onChange={handleVideo} accept="video/*" />
+
+                {
+                  videoUrl ?
+                    <div className="w-[100px] h-[80px] border mt-5 relative">
+                      <video src={`${videoUrl}`}></video>
+
+                      <div onClick={VideoClose} className="w-[26px] h-[26px] bg-[#F31A1A] rounded-full flex items-center justify-center  absolute -top-3 -right-3">
+                        <Close className={"!stroke-white !w-[10px] !h-[10px]"} />
+                      </div>
+                    </div> :
+                    false
+                }
               </div>
 
               <div className="flex gap-2 mt-6">
                 <div
                   onClick={reviewsStatus}
-                  className={`h-[20px] w-9  rounded-2xl relative before:h-4 before:w-4 before:rounded-full before:bg-white before:absolute before:top-1/2 before:-translate-y-1/2 ${
-                    swipe
+                  className={`h-[20px] w-9  rounded-2xl relative before:h-4 before:w-4 before:rounded-full before:bg-white before:absolute before:top-1/2 before:-translate-y-1/2 ${swipe
                       ? "before:right-[2px] before:duration-300 bg-blue-600"
                       : "before:left-[2px] before:duration-300 bg-gray-400"
-                  }`}
+                    }`}
                 ></div>
                 <h3 className="font-semibold text-[12px] text-primaryColor">
                   Enable reviews
@@ -287,7 +289,7 @@ const AddInfo = () => {
                     limitTags={2}
                     id="multiple-limit-tags group_industry"
                     options={first}
-                    getOptionLabel={(option) => option.title}
+                    getOptionLabel={(option) => option}
                     defaultValue={[]}
                     renderInput={(params) => (
                       <TextField
@@ -320,7 +322,7 @@ const AddInfo = () => {
                     limitTags={2}
                     id="multiple-limit-tags group_primary_goal"
                     options={second}
-                    getOptionLabel={(option) => option.title}
+                    getOptionLabel={(option) => option}
                     defaultValue={[]}
                     renderInput={(params) => (
                       <TextField {...params} placeholder="select" />
@@ -349,7 +351,7 @@ const AddInfo = () => {
                     limitTags={2}
                     id="multiple-limit-tags group_focus_area"
                     options={third}
-                    getOptionLabel={(option) => option.title}
+                    getOptionLabel={(option) => option}
                     defaultValue={[]}
                     renderInput={(params) => (
                       <TextField {...params} placeholder="select" />
@@ -379,7 +381,7 @@ const AddInfo = () => {
                     limitTags={2}
                     id="multiple-limit-tags group_key_topics"
                     options={forth}
-                    getOptionLabel={(option) => option.title}
+                    getOptionLabel={(option) => option}
                     defaultValue={[]}
                     renderInput={(params) => (
                       <TextField
