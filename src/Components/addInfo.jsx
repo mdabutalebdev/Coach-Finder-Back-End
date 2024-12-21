@@ -86,8 +86,6 @@ const AddInfo = () => {
   const infoSubmit = (e) => {
     e.preventDefault();
 
-    console.log("groupInfo", groupInfo);
-
     let token = localStorage.getItem("adminAuthToken");
     async function infoFunc() {
       try {
