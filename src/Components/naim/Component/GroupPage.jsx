@@ -255,7 +255,7 @@ const GroupPage = () => {
                                         </div>
                                     </div>
 
-                                    <div className="w-2/12 text-left text-[#EB3743] text-xm font-normal">{el.group_name}</div>
+                                    <div className="w-2/12 text-left text-[#EB3743] text-xm font-normal">3 Industrial Road</div>
                                     <div className="w-2/12 text-left text-[#1A1A1A] text-xm font-normal capitalize">{el.country},{el.city}</div>
                                     <div className="w-2/12 text-left text-[#1A1A1A] text-xm font-normal capitalize">
                                         {el.group_createdBy.first_name}  {el.group_createdBy.last_name}
