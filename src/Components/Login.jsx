@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Login_logo from "../assets/log_logo.png";
-import Button from "./layouts/Button";
+import Button from "../Components/layouts/Button";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
