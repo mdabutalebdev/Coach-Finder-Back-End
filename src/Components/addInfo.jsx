@@ -10,6 +10,12 @@ import Button from "./layouts/Button";
 import Idea from "../assets/icon/Idea";
 import Cross from "../assets/icon/Cross";
 import axios from "axios";
+
+// 0000000000000000
+
+
+
+
 const AddInfo = () => {
   const [swipe, setswipe] = useState(false);
   const [groupInfo, setgroupInfo] = useState({
@@ -37,8 +43,9 @@ const AddInfo = () => {
     { title: "Real Estate", year: 1957 },
     { title: "Education", year: 1993 },
     { title: "Media", year: 1994 }
-
   ];
+
+
   const second = [
     { title: "Networking", year: 1994 },
     { title: "Scaling my business", year: 1972 },
@@ -50,6 +57,7 @@ const AddInfo = () => {
     { title: "Mentorship", year: 1994 }
 
   ];
+  
   const third = [
     { title: "Integrity", year: 1994 },
     { title: "Innovation", year: 1972 },

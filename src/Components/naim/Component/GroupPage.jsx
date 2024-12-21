@@ -6,7 +6,7 @@ import { Link } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteGroup, fetchGroups, searchFeatch, toastFunc } from '../../../redux/FilterSice';
 
-
+// 000000000000000000000000000
 const GroupPage = () => {
 
     let arr = ["Innovators", "Titans", "Collective", "Visionary", "Dynamic"]
