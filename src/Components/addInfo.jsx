@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Plus from "../assets/icon/Plus";
-import Switch from "@mui/material/Switch";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import Radio from "@mui/material/Radio";
@@ -11,7 +10,6 @@ import Button from "./layouts/Button";
 import Idea from "../assets/icon/Idea";
 import Cross from "../assets/icon/Cross";
 import axios from "axios";
-
 const AddInfo = () => {
   const [swipe, setswipe] = useState(false);
   const [groupInfo, setgroupInfo] = useState({
@@ -86,27 +84,26 @@ const AddInfo = () => {
 
   const infoSubmit = (e) => {
     e.preventDefault();
+    
     let token = localStorage.getItem("adminAuthToken")
-
     async function infoFunc() {
       try {
-        const res = await fetch("http://77.37.74.82:5000/api/groups/create-group", {
-          method: 'POST',
-          body: formData,
-          headers: {
-            "Content-Type": "application/json",
-            'Authorization': `Bearer ${token}`
-          },
-        })
-
-        let response = await res.json()
+        const res = await axios.post("http://77.37.74.82:5000/api/groups/create-group",
+          groupInfo,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              'Authorization': `Bearer ${token}`
+            },
+          })
+        let response = await res.data
+        console.log(response);
         return response
-
       }
       catch (error) {
-        throw Error(error)
-      }
-    }
+        throw Error(error.message)
+      }
+    }
 
     infoFunc()
 
