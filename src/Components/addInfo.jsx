@@ -489,7 +489,7 @@ const AddInfo = () => {
             />
           </div>
 
-          <Button className="mt-10 !py-3">Create Group</Button>
+          <button className="mt-10 !py-3 bg-BtnColor font-bold text-base text-white px-6 rounded-[8px]">Create Group</button>
         </form>
       </div>
     </div>

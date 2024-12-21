@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import Button from '../../../Components/layouts/Button'
+ 
 import { Close, Delet, Delet2, Delet3, Export, Search, Star } from '../icons'
 import { IoFilterOutline } from "react-icons/io5";
 import { Link } from 'react-router';
@@ -107,13 +107,13 @@ const GroupPage = () => {
                             </div>
 
                             <div className="flex gap-4 mt-2">
-                                <Button onClick={() => setpopUpDelet(false)} className='!bg-transparent !border !text-[#14141A]'>
+                                <button onClick={() => setpopUpDelet(false)} className='!bg-transparent !border !text-[#14141A] rounded-[8px] px-3'>
                                     Cancel
-                                </Button>
+                                </button>
 
-                                <Button onClick={handleDelet} className='!bg-[#F31A1A]'>
+                                <button onClick={handleDelet} className='!bg-[#F31A1A] font-bold text-base text-white px-6 py-3 rounded-[8px]'>
                                     Confirm
-                                </Button>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -148,20 +148,20 @@ const GroupPage = () => {
 
                 {
                     chekDisplay ?
-                        <Button onClick={ischecked ? handleDelet : handleDeletPopUp} className="flex gap-2 items-center px-3 font-semibold">
+                        <button onClick={ischecked ? handleDelet : handleDeletPopUp} className="flex gap-2 items-center px-3 font-semibold bg-BtnColor   text-base text-white   py-3 rounded-[8px]">
                             <Delet />
                             Delete
-                        </Button>
+                        </button>
                         :
                         <div className="flex gap-4">
                             <Link to={`/groups/add-info`}>
-                                <Button className='font-semibold'>
+                                <button className='font-semibold bg-BtnColor text-base text-white px-6 py-3 rounded-[8px]'>
                                     Add Group
-                                </Button>
+                                </button>
                             </Link>
-                            <Button onClick={() => setchekDisplay(true)} className='!bg-transparent font-semibold !border !text-[#14141A]'>
+                            <button onClick={() => setchekDisplay(true)} className='!bg-transparent font-semibold !border !text-[#14141A] rounded-[8px] px-3'>
                                 Manage Groups
-                            </Button>
+                            </button>
                         </div>
                 }
             </div>
@@ -186,10 +186,10 @@ const GroupPage = () => {
                     </div>
 
                     <div className="relative">
-                        <Button onClick={() => setfilter(!filter)} className={`flex gap-2 items-center text-sm font-semibold ${filter ? false : "bg-[#F2F2F2] !text-[#787878]"} py-2 px-[10px] `}>
+                        <button onClick={() => setfilter(!filter)} className={`flex gap-2 items-center text-sm font-semibold bg-BtnColor   text-white px-6 py-3 rounded-[8px] ${filter ? false : "bg-[#F2F2F2] !text-[#787878]"} py-2 px-[10px] `}>
                             <IoFilterOutline />
                             Filter
-                        </Button>
+                        </button>
 
                         <div className={`w-64 absolute right-0 top-[110%] z-50 bg-white shadow-lg rounded-md p-4 space-y-2 text-gray-800 duration-500 ease-linear ${filter ? "block scale-1" : "hidden scale-x-0"}`}>
                             <button className="block w-full text-left hover:bg-gray-100 px-4 py-2 rounded-md">
