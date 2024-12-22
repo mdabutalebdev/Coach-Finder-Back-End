@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
- 
 import { Close, Delet, Delet2, Delet3, Export, Search, Star } from '../icons'
 import { IoFilterOutline } from "react-icons/io5";
 import { Link } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteGroup, fetchGroups, searchFeatch, toastFunc } from '../../../redux/FilterSice';
+import { deleteGroup, fetchGroups, searchFeatch, sortFunc, toastFunc } from '../../../redux/FilterSice';
 
 // 000000000000000000000000000
 const GroupPage = () => {
@@ -41,6 +40,19 @@ const GroupPage = () => {
 
     const searchChange = (e) => {
         dispatch(searchFeatch(e.target.value));
+    }
+
+    const sortSubmit = (e) => {
+        e.target.tagName.toLowerCase() === 'div' ?
+            false
+            :
+            dispatch(
+                sortFunc(
+                    e.target.tagName.toLowerCase() === 'button' ?
+                        e.target.querySelector('span').innerHTML
+                        : e.target.innerHTML
+                )
+            )
     }
 
     function handleCheckboxChange(id) {
@@ -191,24 +203,24 @@ const GroupPage = () => {
                             Filter
                         </button>
 
-                        <div className={`w-64 absolute right-0 top-[110%] z-50 bg-white shadow-lg rounded-md p-4 space-y-2 text-gray-800 duration-500 ease-linear ${filter ? "block scale-1" : "hidden scale-x-0"}`}>
+                        <div onClick={sortSubmit} className={`w-64 absolute right-0 top-[110%] z-50 bg-white shadow-lg rounded-md p-4 space-y-2 text-gray-800 duration-500 ease-linear ${filter ? "block scale-1" : "hidden scale-x-0"}`}>
                             <button className="block w-full text-left hover:bg-gray-100 px-4 py-2 rounded-md">
-                                Alphabetical <span className="font-bold">A–Z</span>
+                                Alphabetical <span className="font-bold">A-Z</span>
                             </button>
                             <button className="block w-full text-left hover:bg-gray-100 px-4 py-2 rounded-md">
-                                Alphabetical <span className="font-bold">Z–A</span>
+                                Alphabetical <span className="font-bold">Z-A</span>
                             </button>
                             <button className="block w-full text-left hover:bg-gray-100 px-4 py-2 rounded-md">
-                                Dates – <span className="font-bold">Ascending</span>
+                                Dates - <span className="font-bold">Ascending</span>
                             </button>
                             <button className="block w-full text-left hover:bg-gray-100 px-4 py-2 rounded-md">
-                                Dates – <span className="font-bold">Descending</span>
+                                Dates - <span className="font-bold">Descending</span>
                             </button>
                             <button className="block w-full text-left hover:bg-gray-100 px-4 py-2 rounded-md">
-                                Members – <span className="font-bold">High – Low</span>
+                                Members - <span className="font-bold">High - Low</span>
                             </button>
                             <button className="block w-full text-left hover:bg-gray-100 px-4 py-2 rounded-md">
-                                Members – <span className="font-bold">Low – High</span>
+                                Members - <span className="font-bold">Low - High</span>
                             </button>
                         </div>
 
@@ -255,7 +267,7 @@ const GroupPage = () => {
                                         </div>
                                     </div>
 
-                                    <div className="w-2/12 text-left text-[#EB3743] text-xm font-normal">3 Industrial Road</div>
+                                    <div className="w-2/12 text-left text-[#EB3743] text-xm font-normal">{el._id}</div>
                                     <div className="w-2/12 text-left text-[#1A1A1A] text-xm font-normal capitalize">{el.country},{el.city}</div>
                                     <div className="w-2/12 text-left text-[#1A1A1A] text-xm font-normal capitalize">
                                         {el.group_createdBy.first_name}  {el.group_createdBy.last_name}
