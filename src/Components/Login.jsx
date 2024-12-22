@@ -4,6 +4,7 @@ import Login_logo from "../assets/log_logo.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
+import axiosInstance from "../lib/axios.config";
 
 
 
@@ -23,8 +24,8 @@ const Login = () => {
     setError("");
     setLoading(true);
     try {
-      const response = await axios.post(
-        "http://77.37.74.82:5000/api/auth/admin/login",
+      const response = await axiosInstance.post(
+        "/auth/login",
         formData,
         {
           headers: {
@@ -33,13 +34,14 @@ const Login = () => {
         }
       );
       if (response?.data) {
+        console.log(response);
+        localStorage.setItem("authToken", response.data.data.token)
         Swal.fire({
           title: response.data.message,
           icon: "success",
         });
       }
-      localStorage.setItem("adminAuthToken", response.data.token);
-      localStorage.setItem("adminId", response?.data?.user?.id);
+       
       navigate("/dashboard");
     } catch (err) {
       if (err) {
