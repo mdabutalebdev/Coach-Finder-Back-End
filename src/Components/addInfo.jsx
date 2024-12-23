@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Plus from "../assets/icon/Plus";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
@@ -12,11 +12,10 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { Close } from "./naim/icons";
 
-
-
 const AddInfo = () => {
   const adminId = localStorage.getItem("adminId");
   const [swipe, setswipe] = useState(false);
+  const [file, setfile] = useState();
 
   const [imgUrl, setimgUrl] = useState(false);
   const [videoUrl, setvideoUrl] = useState(false);
@@ -41,10 +40,44 @@ const AddInfo = () => {
     group_size: 0,
   });
 
-  const first = ["Finance", "Healthcare", "Consumer Goods", "Manufacturing", "Real Estate", "Education", "Media"];
-  const second = ["Networking", "Scaling my business", "Personal development", "Leadership insights", "Accountability", "Problem-solving", "Exploring new markets", "Mentorship"];
-  const third = ["Integrity", "Innovation", "Collaboration", "Growth mindset", "Accountability", "Transparency", "Inclusivity"];
-  const forth = ["Scaling the business", "Managing teams", "Fundraising", "Market competition", "Personal development", "Operations efficiency", "Sales and marketing", "Innovation and product development"];
+  const first = [
+    "Finance",
+    "Healthcare",
+    "Consumer Goods",
+    "Manufacturing",
+    "Real Estate",
+    "Education",
+    "Media",
+  ];
+  const second = [
+    "Networking",
+    "Scaling my business",
+    "Personal development",
+    "Leadership insights",
+    "Accountability",
+    "Problem-solving",
+    "Exploring new markets",
+    "Mentorship",
+  ];
+  const third = [
+    "Integrity",
+    "Innovation",
+    "Collaboration",
+    "Growth mindset",
+    "Accountability",
+    "Transparency",
+    "Inclusivity",
+  ];
+  const forth = [
+    "Scaling the business",
+    "Managing teams",
+    "Fundraising",
+    "Market competition",
+    "Personal development",
+    "Operations efficiency",
+    "Sales and marketing",
+    "Innovation and product development",
+  ];
 
   const inputChange = (e) => {
     setgroupInfo({ ...groupInfo, [e.target.name]: e.target.value });
@@ -57,41 +90,75 @@ const AddInfo = () => {
 
   const handleImage = (e) => {
     const file = e.target.files[0];
-    setgroupInfo({ ...groupInfo, group_logo: e.target.files[0] })
+    setfile(file);
+    setgroupInfo({ ...groupInfo, group_logo: e.target.files[0] });
     const imagePath = URL.createObjectURL(file);
-    setimgUrl(imagePath)
-  }
-    console.log(groupInfo);
-    
+    setimgUrl(imagePath);
+  };
+  console.log(groupInfo);
+
   const imgClose = () => {
-    setgroupInfo({ ...groupInfo, group_logo: "" })
-    setimgUrl(false)
-  }
+    setgroupInfo({ ...groupInfo, group_logo: "" });
+    setimgUrl(false);
+  };
 
   const handleVideo = (e) => {
     const file = e.target.files[0];
     console.log(file);
 
-    setgroupInfo({ ...groupInfo, group_video: e.target.files[0] })
+    setgroupInfo({ ...groupInfo, group_video: e.target.files[0] });
     const videoPath = URL.createObjectURL(file);
-    setvideoUrl(videoPath)
-  }
+    setvideoUrl(videoPath);
+  };
 
   const VideoClose = () => {
-    setgroupInfo({ ...groupInfo, group_video: "" })
-    setvideoUrl(false)
-  }
-
+    setgroupInfo({ ...groupInfo, group_video: "" });
+    setvideoUrl(false);
+  };
 
   const infoSubmit = (e) => {
     e.preventDefault();
+    const formData = new FormData();
+
+    const hello = {
+      group_name: "Tech Innovators",
+      country: "USA",
+      city: "San Francisco",
+      group_industry: "Technology",
+      group_size: "50-100",
+      group_primary_goal: "Networking and Collaboration",
+      group_focus_area: "Software Development",
+      group_key_topics: ["AI", "Machine Learning", "Cloud Computing"],
+      description:
+        "A group dedicated to fostering innovation in the tech industry by connecting like-minded individuals.",
+      meeting_format: "Virtual",
+      hiring_price: "Free",
+      registration_link: "https://example.com/register",
+      group_video: "https://www.youtube.com/watch?v=example",
+      review_status: false,
+      group_createdBy: "67584f67e90deb57d94cdd4f",
+      group_members: "75",
+      group_rating: "4.5",
+    };
+
+    Object.entries(hello).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+
+    formData.append("group_logo", file);
+
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
+
+    console.log("groupInfo", groupInfo);
 
     let token = localStorage.getItem("adminAuthToken");
     async function infoFunc() {
       try {
-        const res = await axios.post(
+        const { data: response } = await axios.post(
           "http://77.37.74.82:5000/api/groups/create-group",
-          groupInfo,
+          formData,
           {
             headers: {
               "Content-Type": "application/json",
@@ -99,7 +166,9 @@ const AddInfo = () => {
             },
           }
         );
-        let response = await res.data;
+
+        console.log("api respo");
+
         if (response) {
           Swal.fire({
             title: response?.message,
@@ -212,19 +281,28 @@ const AddInfo = () => {
                     </h4>
                   </div>
                 </label>
-                <input onChange={handleImage} type="file" id="logo" className="hidden" accept="image/*" />
+                <input
+                  onChange={handleImage}
+                  type="file"
+                  id="logo"
+                  className="hidden"
+                  accept="image/*"
+                />
 
-                {
-                  imgUrl ?
-                    <div className="w-[100px] h-[80px] border mt-5 relative">
-                      <img src={`${imgUrl}`} alt="" className="w-full h-full" />
+                {imgUrl ? (
+                  <div className="w-[100px] h-[80px] border mt-5 relative">
+                    <img src={`${imgUrl}`} alt="" className="w-full h-full" />
 
-                      <div onClick={imgClose} className="w-[26px] h-[26px] bg-[#F31A1A] rounded-full flex items-center justify-center  absolute -top-3 -right-3">
-                        <Close className={"!stroke-white !w-[10px] !h-[10px]"} />
-                      </div>
-                    </div> :
-                    false
-                }
+                    <div
+                      onClick={imgClose}
+                      className="w-[26px] h-[26px] bg-[#F31A1A] rounded-full flex items-center justify-center  absolute -top-3 -right-3"
+                    >
+                      <Close className={"!stroke-white !w-[10px] !h-[10px]"} />
+                    </div>
+                  </div>
+                ) : (
+                  false
+                )}
               </div>
 
               <div className="">
@@ -236,28 +314,38 @@ const AddInfo = () => {
                     </h4>
                   </div>
                 </label>
-                <input type="file" id="video" className="hidden" onChange={handleVideo} accept="video/*" />
+                <input
+                  type="file"
+                  id="video"
+                  className="hidden"
+                  onChange={handleVideo}
+                  accept="video/*"
+                />
 
-                {
-                  videoUrl ?
-                    <div className="w-[100px] h-[80px] border mt-5 relative">
-                      <video src={`${videoUrl}`}></video>
+                {videoUrl ? (
+                  <div className="w-[100px] h-[80px] border mt-5 relative">
+                    <video src={`${videoUrl}`}></video>
 
-                      <div onClick={VideoClose} className="w-[26px] h-[26px] bg-[#F31A1A] rounded-full flex items-center justify-center  absolute -top-3 -right-3">
-                        <Close className={"!stroke-white !w-[10px] !h-[10px]"} />
-                      </div>
-                    </div> :
-                    false
-                }
+                    <div
+                      onClick={VideoClose}
+                      className="w-[26px] h-[26px] bg-[#F31A1A] rounded-full flex items-center justify-center  absolute -top-3 -right-3"
+                    >
+                      <Close className={"!stroke-white !w-[10px] !h-[10px]"} />
+                    </div>
+                  </div>
+                ) : (
+                  false
+                )}
               </div>
 
               <div className="flex gap-2 mt-6">
                 <div
                   onClick={reviewsStatus}
-                  className={`h-[20px] w-9  rounded-2xl relative before:h-4 before:w-4 before:rounded-full before:bg-white before:absolute before:top-1/2 before:-translate-y-1/2 ${swipe
+                  className={`h-[20px] w-9  rounded-2xl relative before:h-4 before:w-4 before:rounded-full before:bg-white before:absolute before:top-1/2 before:-translate-y-1/2 ${
+                    swipe
                       ? "before:right-[2px] before:duration-300 bg-blue-600"
                       : "before:left-[2px] before:duration-300 bg-gray-400"
-                    }`}
+                  }`}
                 ></div>
                 <h3 className="font-semibold text-[12px] text-primaryColor">
                   Enable reviews
@@ -475,7 +563,6 @@ const AddInfo = () => {
             </div>
           </div>
 
-
           <div className="mt-6">
             <label htmlFor="registration_link">Registration link*</label>
             <br />
@@ -489,7 +576,9 @@ const AddInfo = () => {
             />
           </div>
 
-          <button className="mt-10 !py-3 bg-BtnColor font-bold text-base text-white px-6 rounded-[8px]">Create Group</button>
+          <button className="mt-10 !py-3 bg-BtnColor font-bold text-base text-white px-6 rounded-[8px]">
+            Create Group
+          </button>
         </form>
       </div>
     </div>
