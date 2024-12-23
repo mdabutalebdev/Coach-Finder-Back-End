@@ -1,47 +1,42 @@
 import React, { useState } from "react";
 import Login_logo from "../assets/log_logo.png";
- 
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import Swal from "sweetalert2";
 import axiosInstance from "../lib/axios.config";
+import { useForm } from "react-hook-form"
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 
 
+const zodLoginValidation = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(1, "Password is required"), // Ensures password is not empty
+})
 
 const Login = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: zodResolver(zodLoginValidation) });
+ 
 
-  const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleAdminLoginForm = async (e) => {
-    e.preventDefault();
-    setError("");
+  const onSubmit = async(data) => {
     setLoading(true);
     try {
       const response = await axiosInstance.post(
         "/auth/login",
-        formData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+        data,);
       if (response?.data) {
         console.log(response);
-        localStorage.setItem("authToken", response.data.data.token)
+        localStorage.setItem("authToken", response?.data?.data?.token)
         Swal.fire({
           title: response.data.message,
           icon: "success",
         });
       }
-       
+
       navigate("/dashboard");
     } catch (err) {
       if (err) {
@@ -59,39 +54,46 @@ const Login = () => {
     } finally {
       setLoading(false);
     }
-  };
+  } 
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+ 
   return (
     <div className="container flex flex-col justify-center items-center mt-20">
       <img src={Login_logo} alt="Login_logo" className="" />
       <h3 className="font-semibold text-[20px] text-primaryColor pt-8 pb-8">
         Admin Panel
       </h3>
-      <form className="" onSubmit={handleAdminLoginForm}>
+      <form className="" onSubmit={handleSubmit(onSubmit)}>
         <div className="mt-6">
           <label htmlFor="email">Your email address</label> <br />
           <input
-            name="email"
-            required
-            id="email"
-            type="email"
+            {...register("email")}
+            aria-invalid={errors.email ? "true" : "false"}
+
+
+            type="text"
             placeholder="account@email.com"
             className="font-normal text-[12px] text-[#1A1A1A] opacity-60 border border-[#A2A2A2] py-3 pl-3  w-full rounded-[8px] outline-none mt-2"
-            value={formData.email}
-            onChange={handleInputChange}
+
+
             disabled={loading}
-          />
+          />  {errors.email && <p role="alert">hooop</p>}
         </div>
         <div className="mt-6">
           <label htmlFor="password">Your password</label> <br />
           <input
-            name="password"
-            required
-            id="password"
+            {...register("password")}
+
+
+
             type="password"
             placeholder="*******"
             className="font-normal text-[12px] text-[#1A1A1A] opacity-60 border border-[#A2A2A2] py-3 pl-3  w-full rounded-[8px] outline-none mt-2"
-            value={formData.password}
-            onChange={handleInputChange}
+
+
             disabled={loading}
           />
         </div>

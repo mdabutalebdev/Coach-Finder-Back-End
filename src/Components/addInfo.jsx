@@ -11,13 +11,35 @@ import Cross from "../assets/icon/Cross";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { Close } from "./naim/icons";
+import { useForm } from "react-hook-form"
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 
 
+const zodAddInfoValidation = z.object({
+  group_name: z.string().min(3, { message: "Group name is required" }),
+  country: z.string().nonempty({ message: "Country is required" }),
+  city: z.string().nonempty({ message: "City is required" }),
+  group_industry: z.string().nonempty({ message: "Industry is required" }),
+  group_primary_goal: z.string().nonempty({ message: "Primary goal is required" }),
+  description: z.string().min(10, { message: "Description must be at least 10 characters" }),
+  meeting_format: z.enum(["In person", "Virtual", "Hybrid"], {
+    errorMap: () => ({ message: "Please select a valid meeting format" }),
+  }),
+  hiring_price: z.string().regex(/^\d+$/, { message: "Price must be a valid number" }),
+  registration_link: z.string().url({ message: "Enter a valid URL" }),
+})
 const AddInfo = () => {
+
+ const {
+     register,
+     handleSubmit,
+     formState: { errors },
+   } = useForm({ resolver: zodResolver(zodAddInfoValidation) });
+
   const adminId = localStorage.getItem("adminId");
   const [swipe, setswipe] = useState(false);
-
   const [imgUrl, setimgUrl] = useState(false);
   const [videoUrl, setvideoUrl] = useState(false);
 
@@ -40,6 +62,7 @@ const AddInfo = () => {
     group_rating: [],
     group_size: 0,
   });
+ 
 
   const first = ["Finance", "Healthcare", "Consumer Goods", "Manufacturing", "Real Estate", "Education", "Media"];
   const second = ["Networking", "Scaling my business", "Personal development", "Leadership insights", "Accountability", "Problem-solving", "Exploring new markets", "Mentorship"];
@@ -82,9 +105,14 @@ const AddInfo = () => {
     setvideoUrl(false)
   }
 
+ const formHandler = (data)=>{
+console.log(data);
 
-  const infoSubmit = (e) => {
+ }
+
+  const onSubmit = (e) => {
     e.preventDefault();
+console.log(e);
 
     let token = localStorage.getItem("adminAuthToken");
     async function infoFunc() {
@@ -140,7 +168,7 @@ const AddInfo = () => {
         <h3 className="font-semibold text-xl text-[#000000]">New Group</h3>
         <div className="border-t px-10 mt-3"></div>
 
-        <form onSubmit={infoSubmit}>
+        <form onSubmit={handleSubmit(formHandler)}>
           <div className="grid grid-cols-2">
             {/* left one start */}
             <div className="">
@@ -152,13 +180,11 @@ const AddInfo = () => {
                 <label htmlFor="group_name"> Group Name*</label>
                 <br />
                 <input
-                  onChange={inputChange}
-                  name="group_name"
-                  id="group_name"
+                  {...register("group_name")}
                   type="text"
                   placeholder="Input Name"
                   className="font-normal text-[12px] w-[302px] h-[38px] text-[#1A1A1A] opacity-60 border border-[#A2A2A2] py-3  px-[10px] rounded-[8px] outline-none mt-2"
-                />
+                /> {errors.group_name && <p className="text-red-500">{errors.group_name.message}</p>}
               </div>
 
               <h3 className="font-semibold text-base text-[#1A1A1A] pt-6">
@@ -170,10 +196,7 @@ const AddInfo = () => {
                   <label htmlFor="country">COUNTRY*</label>
                   <br />
                   <select
-                    onChange={inputChange}
-                    value={groupInfo.country}
-                    name="country"
-                    id="country"
+                    {...register("country")}
                     className="font-normal text-[12px] text-[#1A1A1A] opacity-60 border border-[#A2A2A2] outline-none py-2 px-2 w-[174px] h-[38px] rounded-[8px] mt-2 "
                   >
                     <option>United States</option>
@@ -181,19 +204,19 @@ const AddInfo = () => {
                     <option>India</option>
                     <option>Nepal</option>
                   </select>
+                  {errors.country && <p className="text-red-500">{errors.country.message}</p>}
                 </div>
 
                 <div className="mt-6">
                   <label htmlFor="city">CITY*</label>
                   <br />
                   <input
-                    onChange={inputChange}
-                    name="city"
-                    id="city"
+                     {...register("city")}
                     type="text"
                     placeholder="Input Name"
                     className="font-normal text-[12px] text-[#1A1A1A] opacity-60 border border-[#A2A2A2] py-2 w-[174px] h-[38px] rounded-[8px] outline-none mt-2 px-2"
                   />
+                  {errors.city && <p className="text-red-500">{errors.city.message}</p>}
                 </div>
               </div>
             </div>
@@ -212,7 +235,7 @@ const AddInfo = () => {
                     </h4>
                   </div>
                 </label>
-                <input onChange={handleImage} type="file" id="logo" className="hidden" accept="image/*" />
+                <input   type="file" id="logo" className="hidden" accept="image/*" />
 
                 {
                   imgUrl ?
@@ -408,16 +431,14 @@ const AddInfo = () => {
             </label>
 
             <textarea
-              name="description"
-              id="description"
-              value={groupInfo.description}
-              onChange={inputChange}
+              {...register("description")}
               maxLength="500"
               placeholder="0/500"
               rows="5"
               cols="30"
               className="border w-full rounded-[8px] outline-none mt-3 font-medium text-[12px] text-[#949494] pl-[23px] pr-8 pt-[20px]"
             />
+            {errors.description && <p className="text-red-500">{errors.description.message}</p>}
           </div>
 
           <div className="">
@@ -428,12 +449,7 @@ const AddInfo = () => {
             <div className="">
               <FormControl>
                 <RadioGroup
-                  onChange={(e) =>
-                    setgroupInfo({
-                      ...groupInfo,
-                      meeting_format: e.target.value,
-                    })
-                  }
+                 {...register("meeting_format")}
                   row
                   aria-labelledby="demo-row-radio-buttons-group-label"
                   name="row-radio-buttons-group"
@@ -454,6 +470,7 @@ const AddInfo = () => {
                     label="Hybrid"
                   />
                 </RadioGroup>
+                {errors.meeting_format && <p className="text-red-500">{errors.meeting_format.message}</p>}
               </FormControl>
             </div>
           </div>
@@ -462,17 +479,19 @@ const AddInfo = () => {
             <label htmlFor="hiring_price">Pricing*</label>
             <div className="flex gap-x-3">
               <input
-                name="hiring_price"
-                onChange={inputChange}
-                id="hiring_price"
+               
+                {...register("hiring_price")}
+             
                 type="text"
                 placeholder="Input Price"
                 className="font-normal text-[12px] text-[#1A1A1A] opacity-60 border border-[#A2A2A2] py-2 w-[174px] rounded-[8px] outline-none mt-2 px-2"
-              />
+              /> 
+             
               <p className="font-normal text-[12px] text-[#1A1A1A] opacity-60 pt-5">
                 /Hr
               </p>
             </div>
+              {errors.hiring_price && <p className="text-red-500">{errors.hiring_price.message}</p>}
           </div>
 
 
@@ -480,13 +499,13 @@ const AddInfo = () => {
             <label htmlFor="registration_link">Registration link*</label>
             <br />
             <input
-              name="registration_link"
-              id="registration_link"
-              onChange={inputChange}
+             
+              {...register("registration_link")}
               type="text"
               placeholder="Paste URL"
               className="font-normal text-[12px] text-[#1A1A1A] opacity-60 border border-[#A2A2A2] py-2 w-[174px] rounded-[8px] outline-none mt-2 px-2"
             />
+            {errors.registration_link && <p className="text-red-500">{errors.registration_link.message}</p>}
           </div>
 
           <button className="mt-10 !py-3 bg-BtnColor font-bold text-base text-white px-6 rounded-[8px]">Create Group</button>
