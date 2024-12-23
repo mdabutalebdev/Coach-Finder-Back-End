@@ -1,5 +1,5 @@
 import React from "react";
-import Sidebar from "./naim/Component/Sidebar";
+import Sidebar from "./naim/Comp/Sidebar";
 import AddInfo from "../Components/addInfo";
 import Logo from "../assets/log_logo.png";
 

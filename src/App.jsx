@@ -1,5 +1,5 @@
 import React from "react"
-import PageCategory from "./Components/naim/Component/PageCategory";
+import PageCategory from "./Components/naim/Comp/PageCategory";
 import { BrowserRouter, Routes, Route } from "react-router";
 import AddInfoPage from "./Components/AddInfoPage";
 import Login from './Components/Login'
