@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Plus from "../assets/icon/Plus";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
@@ -563,7 +563,6 @@ const AddInfo = () => {
             </div>
           </div>
 
-
           <div className="mt-6">
             <label htmlFor="registration_link">Registration link*</label>
             <br />
@@ -577,7 +576,9 @@ const AddInfo = () => {
             />
           </div>
 
-          <button className="mt-10 !py-3 bg-BtnColor font-bold text-base text-white px-6 rounded-[8px]">Create Group</button>
+          <button className="mt-10 !py-3 bg-BtnColor font-bold text-base text-white px-6 rounded-[8px]">
+            Create Group
+          </button>
         </form>
       </div>
     </div>
