@@ -1,6 +1,6 @@
-import Sidebar from "./naim/Component/Sidebar";
-import AddInfo from "../Components/addInfo";
 import Logo from "../assets/log_logo.png";
+import AddInfo from "./addInfo";
+import Sidebar from "./naim/Comp/Sidebar";
 
 const AddInfoPage = () => {
   return (
