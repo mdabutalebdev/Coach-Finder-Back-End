@@ -14,6 +14,7 @@ import { Close } from "./naim/icons";
 import { useForm } from "react-hook-form"
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import DragIcon from "../assets/icon/DragIcon";
 
 
 
@@ -62,12 +63,19 @@ const AddInfo = () => {
      register,
      handleSubmit,
      formState: { errors },
-   } = useForm({ resolver: zodResolver(zodAddInfoValidation) });
+   } = useForm();
+ 
 
   const adminId = localStorage.getItem("adminId");
   const [swipe, setswipe] = useState(false);
   const [imgUrl, setimgUrl] = useState(false);
   const [videoUrl, setvideoUrl] = useState(false);
+
+
+  const [addLogoPop, setAddLogoPop] = useState(false);
+  const [upDone, setupDone] = useState(false);
+  const [progress, setProgress] = useState(0);
+
 
   const [groupInfo, setgroupInfo] = useState({
     group_name: "",
@@ -89,34 +97,24 @@ const AddInfo = () => {
     group_size: 0,
   });
  
+ 
 
   const first = ["Finance", "Healthcare", "Consumer Goods", "Manufacturing", "Real Estate", "Education", "Media"];
   const second = ["Networking", "Scaling my business", "Personal development", "Leadership insights", "Accountability", "Problem-solving", "Exploring new markets", "Mentorship"];
   const third = ["Integrity", "Innovation", "Collaboration", "Growth mindset", "Accountability", "Transparency", "Inclusivity"];
   const forth = ["Scaling the business", "Managing teams", "Fundraising", "Market competition", "Personal development", "Operations efficiency", "Sales and marketing", "Innovation and product development"];
 
-  const inputChange = (e) => {
-    setgroupInfo({ ...groupInfo, [e.target.name]: e.target.value });
-  };
+//  ============================================
 
   const reviewsStatus = () => {
     setswipe(!swipe);
     setgroupInfo({ ...groupInfo, review_status: !swipe });
   };
 
-  const handleImage = (e) => {
-    const file = e.target.files[0];
-    setfile(file);
-    setgroupInfo({ ...groupInfo, group_logo: e.target.files[0] });
-    const imagePath = URL.createObjectURL(file);
-    setimgUrl(imagePath);
-  };
-  console.log(groupInfo);
+ 
+ 
 
-  const imgClose = () => {
-    setgroupInfo({ ...groupInfo, group_logo: "" });
-    setimgUrl(false);
-  };
+ 
 
   const handleVideo = (e) => {
     const file = e.target.files[0];
@@ -132,14 +130,53 @@ const AddInfo = () => {
     setvideoUrl(false)
   }
 
+const changeDnd = () => {
+  setgroupInfo({ ...groupInfo, group_logo: document.querySelector(".dndInputFild").files[0] })
+  let url = URL.createObjectURL(document.querySelector(".dndInputFild").files[0])
+  setimgUrl(url);
+}
+
+const importDragOver = (e) => {
+  e.preventDefault()
+}
+
+const importDragDrop = (e) => {
+  e.preventDefault();
+  document.querySelector(".dndInputFild").files = e.dataTransfer.files
+  changeDnd()
+  }
+
+const imgClose = () => {
+  setgroupInfo({ ...groupInfo, group_logo: "" });
+  setupDone(false)
+};
+
+const dndSubmit = (e) => {
+  e.preventDefault()
+  const interval = setInterval(() => {
+    setProgress((prevProgress) => {
+      if (prevProgress >= 100) {
+        clearInterval(interval);
+        setAddLogoPop(false)
+        setupDone(true)
+        setProgress(0)
+        document.getElementById('url').value = ""
+        return 100;
+      }
+      return prevProgress + 1;
+    });
+    }, 25);
+  }
+
+
  const formHandler = (data)=>{
-console.log(data);
+ 
 
  }
 
   const onSubmit = (e) => {
     e.preventDefault();
-console.log(e);
+ 
 
     let token = localStorage.getItem("adminAuthToken");
     async function infoFunc() {
@@ -155,7 +192,7 @@ console.log(e);
           }
         );
 
-        console.log("api respo");
+  
 
         if (response) {
           Swal.fire({
@@ -180,6 +217,98 @@ console.log(e);
 
   return (
     <div className=" py-8 pl-8 pr-20 w-full">
+
+
+<div className={`w-full h-full bg-[#00000066] absolute top-0 left-0 z-50 ${addLogoPop ? "block" : "hidden"} flex justify-center items-center`}>
+        <div className="p-6 border w-[550px] rounded-[24px] bg-white">
+
+          {/* addLogo Pop up start  */}
+          <form onSubmit={dndSubmit}>
+
+            <div className="flex items-center justify-between">
+              <div className="">
+                <h3 className="text-[#0B0B0B] text-[18px] leading-[24px] font-bold">Media Upload</h3>
+                <h3 className="text-SecondaryColor text-[14px] leading-[20px] mt-1">Add your logo here, and you can upload only one file</h3>
+              </div>
+              <Close className="!stroke-[black] cursor-pointer" onClick={() => setAddLogoPop(false)} />
+            </div>
+
+            <div className="w-full h-[145px] mt-4 relative">
+              <label onDragOver={importDragOver} onDrop={importDragDrop} htmlFor="dnd" className="w-full h-full overflow-hidden flex flex-col items-center justify-center rounded-lg border border-dashed border-[#EB3743] bg-white">
+
+                <div className="">
+                  <DragIcon />
+                  <h3 className="text-sm leading-[20px] text-[#0B0B0B] pt-3">Drag your file or <span className="font-semibold text-[#EB3743]">browse</span>
+                  </h3>
+                  <p className="text-sm leading-[20px] text-[#6D6D6D] pt-2">
+                    Max 10 MB files are allowed
+                  </p>
+                </div>
+
+              </label>
+
+              <input required {...register("group_logo")} onChange={changeDnd} type="file" id="dnd" className="absolute top-0 hidden dndInputFild" accept=".jpg, .jpeg, .png, .svg" />
+              {errors.group_logo && <p className="text-red-500">{errors.group_logo.message}</p>}
+            </div>
+
+            <div className="mt-4 flex flex-col gap-y-4">
+              <p className="text-sm leading-[20px] text-[#6D6D6D] pt-2">
+                Only support .jpg, .png and .svg and zip files
+              </p>
+
+              <div className="text-sm leading-[20px] text-[#6D6D6D] pt-2 uppercase text-center flex items-center gap-3">
+                <div className="flex-grow border-t border[#E7E7E7]"></div>
+                OR
+                <div className="flex-grow border-t border[#E7E7E7]"></div>
+              </div>
+
+              <label htmlFor="url" className="text-[#0B0B0B] text-[18px] leading-[24px] font-bold">Upload from URL</label>
+
+              <div className="border border-[#EB3743] rounded-[12px] p-3 flex items-center justify-between gap-4">
+                <input required type="text" id="url" className="w-full h-full outline-none" />
+                <button type="submit" className="bg-BtnColor text-white text-[12px] font-semibold px-4 h-[36px] rounded-[8px]">Upload</button>
+              </div>
+
+            </div>
+
+            {/* progress  start*/}
+            <div className={`p-4 border-2 rounded-[12px] mt-4 ${progress > 0 ? "block" : "hidden"}`}>
+
+              <div className="flex justify-between">
+                <div className="w-full h-[40px] flex gap-2">
+                  <img src={imgUrl ? imgUrl : ""} alt="" className="w-[40px] h-full object-cover" />
+                  <h3 className="font-bold text-xs flex flex-col gap-1">{groupInfo.group_logo ? groupInfo.group_logo.name : false}
+                    <span className="font-normal text-SecondaryColor">
+                      {groupInfo.group_logo ? groupInfo.group_logo.size / 1024 : false}KB</span>
+                  </h3>
+                </div>
+
+                <Close className={"stroke-[#858585] cursor-pointer"} />
+              </div>
+
+              <div className={`w-full mt-1 flex items-center justify-between mr-[100px]`}>
+                <div className="w-[93%] h-2 rounded-lg">
+                  <div
+                    className={`h-full !bg-BtnColor rounded-lg text-center text-white font-semibold`}
+                    style={{ width: `${progress}%` }}
+                  >
+                  </div>
+                </div>
+
+                {progress}%
+              </div>
+
+            </div>
+            {/* progress end */}
+
+          </form>
+          {/* addLogo Pop up end  */}
+
+        </div>
+      </div>
+
+
+
       <div className="flex justify-between py-3 pl-14 w-full bg-[#F9C1C5] rounded-[8px] mb-8 relative">
         <Idea className="absolute top-3 left-5" />
         <p>
@@ -259,33 +388,28 @@ console.log(e);
               </h3>
 
               <div className="">
-                <label htmlFor="logo">
-                  <div className="flex gap-2 mt-6">
+                 
+                  <div onClick={() => setAddLogoPop(true)} className="flex gap-2 mt-6 cursor-pointer">
                     <Plus className="mt-1" />
                     <h4 className="font-semibold text-[12px] text-[#5587FF]">
                       Add Logo
                     </h4>
                   </div>
-                </label>
-                <input  {...register("group_logo")}  className="hidden" accept="image/*" />
-                {errors.group_logo && <p className="text-red-500">{errors.group_logo.message}</p>}
+                
+              
+                
 
                 {
-                  imgUrl ? (  
-                    <div className="w-[100px] h-[80px] border mt-5 relative">
-                      <img src={`${imgUrl}`} alt="" className="w-full h-full" />
+                  upDone ?
+                  <div className="w-[100px] h-[80px] border mt-5 relative">
+                    <img src={`${imgUrl}`} alt="" className="w-full h-full" />
 
-                    <div
-                      onClick={imgClose}
-                      className="w-[26px] h-[26px] bg-[#F31A1A] rounded-full flex items-center justify-center  absolute -top-3 -right-3"
-                    >
-                      <Close className={"!stroke-white !w-[10px] !h-[10px]"} />
+                    <div onClick={imgClose} className="w-[26px] h-[26px] bg-[#F31A1A] rounded-full flex items-center justify-center  absolute -top-3 -right-3">
+                      <Close className={"!stroke-white !w-[10px] !h-[10px] cursor-pointer"} />
                     </div>
-                  </div>
-                )
-                 : (
-                  false
-                )}
+                  </div> :
+                  false
+                }
               </div>
 
               <div className="">
