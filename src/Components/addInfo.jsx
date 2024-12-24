@@ -167,8 +167,6 @@ const AddInfo = () => {
           }
         );
 
-        console.log("api respo");
-
         if (response) {
           Swal.fire({
             title: response?.message,
