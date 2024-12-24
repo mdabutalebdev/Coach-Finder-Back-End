@@ -20,26 +20,26 @@ import DragIcon from "../assets/icon/DragIcon";
 
 const zodAddInfoValidation = z.object({
   group_name: z.string().min(3, { message: "Group name is required" }),
-   
+
   country: z
-  .array(z.string().nonempty({ message: "Each industry must be a non-empty string" }))
-  .nonempty({ message: "At least one industry is required" }),
+    .array(z.string().nonempty({ message: "Each industry must be a non-empty string" }))
+    .nonempty({ message: "At least one industry is required" }),
   city: z.string().nonempty({ message: "City is required" }),
 
   group_industry: z
-  .array(z.string().nonempty({ message: "Each industry must be a non-empty string" }))
-  .nonempty({ message: "At least one industry is required" }),
+    .array(z.string().nonempty({ message: "Each industry must be a non-empty string" }))
+    .nonempty({ message: "At least one industry is required" }),
 
   group_primary_goal: z
-  .array(z.string().nonempty({ message: "Each industry must be a non-empty string" }))
-  .nonempty({ message: "At least one industry is required" }),
+    .array(z.string().nonempty({ message: "Each industry must be a non-empty string" }))
+    .nonempty({ message: "At least one industry is required" }),
 
   group_focus_area: z
-  .array(z.string().nonempty({ message: "Each industry must be a non-empty string" }))
-  .nonempty({ message: "At least one industry is required" }),
+    .array(z.string().nonempty({ message: "Each industry must be a non-empty string" }))
+    .nonempty({ message: "At least one industry is required" }),
   group_key_topics: z
-  .array(z.string().nonempty({ message: "Each industry must be a non-empty string" }))
-  .nonempty({ message: "At least one industry is required" }),
+    .array(z.string().nonempty({ message: "Each industry must be a non-empty string" }))
+    .nonempty({ message: "At least one industry is required" }),
 
   description: z.string().min(10, { message: "Description must be at least 10 characters" }),
   meeting_format: z.enum(["In person", "Virtual", "Hybrid"], {
@@ -53,18 +53,18 @@ const zodAddInfoValidation = z.object({
     .instanceof(File)
     .refine((file) => file.size > 0, { message: "Logo is required" }),
 
-    group_video: z
+  group_video: z
     .instanceof(File)
     .refine((file) => file.size > 0, { message: "" }),
 })
 const AddInfo = () => {
 
- const {
-     register,
-     handleSubmit,
-     formState: { errors },
-   } = useForm();
- 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
 
   const adminId = localStorage.getItem("adminId");
   const [swipe, setswipe] = useState(false);
@@ -74,7 +74,7 @@ const AddInfo = () => {
 
   const [addLogoPop, setAddLogoPop] = useState(false);
   const [upDone, setupDone] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(0);
 
 
   const [groupInfo, setgroupInfo] = useState({
@@ -96,25 +96,25 @@ const AddInfo = () => {
     group_rating: [],
     group_size: 0,
   });
- 
- 
+
+
 
   const first = ["Finance", "Healthcare", "Consumer Goods", "Manufacturing", "Real Estate", "Education", "Media"];
   const second = ["Networking", "Scaling my business", "Personal development", "Leadership insights", "Accountability", "Problem-solving", "Exploring new markets", "Mentorship"];
   const third = ["Integrity", "Innovation", "Collaboration", "Growth mindset", "Accountability", "Transparency", "Inclusivity"];
   const forth = ["Scaling the business", "Managing teams", "Fundraising", "Market competition", "Personal development", "Operations efficiency", "Sales and marketing", "Innovation and product development"];
 
-//  ============================================
+  //  ============================================
 
   const reviewsStatus = () => {
     setswipe(!swipe);
     setgroupInfo({ ...groupInfo, review_status: !swipe });
   };
 
- 
- 
 
- 
+
+
+
 
   const handleVideo = (e) => {
     const file = e.target.files[0];
@@ -128,55 +128,55 @@ const AddInfo = () => {
   const VideoClose = () => {
     setgroupInfo({ ...groupInfo, group_video: "" })
     setvideoUrl(false)
-  }
+  }
 
-const changeDnd = () => {
-  setgroupInfo({ ...groupInfo, group_logo: document.querySelector(".dndInputFild").files[0] })
-  let url = URL.createObjectURL(document.querySelector(".dndInputFild").files[0])
-  setimgUrl(url);
-}
+  const changeDnd = () => {
+    setgroupInfo({ ...groupInfo, group_logo: document.querySelector(".dndInputFild").files[0] })
+    let url = URL.createObjectURL(document.querySelector(".dndInputFild").files[0])
+    setimgUrl(url);
+  }
 
-const importDragOver = (e) => {
-  e.preventDefault()
-}
+  const importDragOver = (e) => {
+    e.preventDefault()
+  }
 
-const importDragDrop = (e) => {
-  e.preventDefault();
-  document.querySelector(".dndInputFild").files = e.dataTransfer.files
-  changeDnd()
-  }
+  const importDragDrop = (e) => {
+    e.preventDefault();
+    document.querySelector(".dndInputFild").files = e.dataTransfer.files
+    changeDnd()
+  }
 
-const imgClose = () => {
-  setgroupInfo({ ...groupInfo, group_logo: "" });
-  setupDone(false)
-};
+  const imgClose = () => {
+    setgroupInfo({ ...groupInfo, group_logo: "" });
+    setupDone(false)
+  };
 
-const dndSubmit = (e) => {
-  e.preventDefault()
-  const interval = setInterval(() => {
-    setProgress((prevProgress) => {
-      if (prevProgress >= 100) {
-        clearInterval(interval);
-        setAddLogoPop(false)
-        setupDone(true)
-        setProgress(0)
-        document.getElementById('url').value = ""
-        return 100;
-      }
-      return prevProgress + 1;
-    });
-    }, 25);
-  }
+  const dndSubmit = (e) => {
+    e.preventDefault()
+    const interval = setInterval(() => {
+      setProgress((prevProgress) => {
+        if (prevProgress >= 100) {
+          clearInterval(interval);
+          setAddLogoPop(false)
+          setupDone(true)
+          setProgress(0)
+          document.getElementById('url').value = ""
+          return 100;
+        }
+        return prevProgress + 1;
+      });
+    }, 25);
+  }
 
 
- const formHandler = (data)=>{
- 
+  const formHandler = (data) => {
 
- }
+
+  }
 
   const onSubmit = (e) => {
     e.preventDefault();
- 
+
 
     let token = localStorage.getItem("adminAuthToken");
     async function infoFunc() {
@@ -192,7 +192,7 @@ const dndSubmit = (e) => {
           }
         );
 
-  
+
 
         if (response) {
           Swal.fire({
@@ -219,7 +219,7 @@ const dndSubmit = (e) => {
     <div className=" py-8 pl-8 pr-20 w-full">
 
 
-<div className={`w-full h-full bg-[#00000066] absolute top-0 left-0 z-50 ${addLogoPop ? "block" : "hidden"} flex justify-center items-center`}>
+      <div className={`w-full h-full bg-[#00000066] absolute top-0 left-0 z-50 ${addLogoPop ? "block" : "hidden"} flex justify-center items-center`}>
         <div className="p-6 border w-[550px] rounded-[24px] bg-white">
 
           {/* addLogo Pop up start  */}
@@ -305,7 +305,7 @@ const dndSubmit = (e) => {
           {/* addLogo Pop up end  */}
 
         </div>
-      </div>
+      </div>
 
 
 
@@ -354,7 +354,7 @@ const dndSubmit = (e) => {
                   <label htmlFor="country">COUNTRY*</label>
                   <br />
                   <select
-                    
+
                     {...register("country")}
                     className="font-normal text-[12px] text-[#1A1A1A] opacity-60 border border-[#A2A2A2] outline-none py-2 px-2 w-[174px] h-[38px] rounded-[8px] mt-2 "
                   >
@@ -372,7 +372,7 @@ const dndSubmit = (e) => {
                   <label htmlFor="city">CITY*</label>
                   <br />
                   <input
-                     {...register("city")}
+                    {...register("city")}
                     type="text"
                     placeholder="Input Name"
                     className="font-normal text-[12px] text-[#1A1A1A] opacity-60 border border-[#A2A2A2] py-2 w-[174px] h-[38px] rounded-[8px] outline-none mt-2 px-2"
@@ -388,27 +388,27 @@ const dndSubmit = (e) => {
               </h3>
 
               <div className="">
-                 
-                  <div onClick={() => setAddLogoPop(true)} className="flex gap-2 mt-6 cursor-pointer">
-                    <Plus className="mt-1" />
-                    <h4 className="font-semibold text-[12px] text-[#5587FF]">
-                      Add Logo
-                    </h4>
-                  </div>
-                
-              
-                
+
+                <div onClick={() => setAddLogoPop(true)} className="flex gap-2 mt-6 cursor-pointer">
+                  <Plus className="mt-1" />
+                  <h4 className="font-semibold text-[12px] text-[#5587FF]">
+                    Add Logo
+                  </h4>
+                </div>
+
+
+
 
                 {
                   upDone ?
-                  <div className="w-[100px] h-[80px] border mt-5 relative">
-                    <img src={`${imgUrl}`} alt="" className="w-full h-full" />
+                    <div className="w-[100px] h-[80px] border mt-5 relative">
+                      <img src={`${imgUrl}`} alt="" className="w-full h-full" />
 
-                    <div onClick={imgClose} className="w-[26px] h-[26px] bg-[#F31A1A] rounded-full flex items-center justify-center  absolute -top-3 -right-3">
-                      <Close className={"!stroke-white !w-[10px] !h-[10px] cursor-pointer"} />
-                    </div>
-                  </div> :
-                  false
+                      <div onClick={imgClose} className="w-[26px] h-[26px] bg-[#F31A1A] rounded-full flex items-center justify-center  absolute -top-3 -right-3">
+                        <Close className={"!stroke-white !w-[10px] !h-[10px] cursor-pointer"} />
+                      </div>
+                    </div> :
+                    false
                 }
               </div>
 
@@ -422,14 +422,14 @@ const dndSubmit = (e) => {
                   </div>
                 </label>
                 <input
-                   {...register("group_video")}
+                  {...register("group_video")}
                   type="file"
                   id="video"
                   className="hidden"
                   onChange={handleVideo}
                   accept="video/*"
                 />
-                 {errors.group_video && <p className="text-red-500">{errors.group_video.message}</p>}
+                {errors.group_video && <p className="text-red-500">{errors.group_video.message}</p>}
                 {videoUrl ? (
                   <div className="w-[100px] h-[80px] border mt-5 relative">
                     <video src={`${videoUrl}`}></video>
@@ -449,11 +449,10 @@ const dndSubmit = (e) => {
               <div className="flex gap-2 mt-6">
                 <div
                   onClick={reviewsStatus}
-                  className={`h-[20px] w-9  rounded-2xl relative before:h-4 before:w-4 before:rounded-full before:bg-white before:absolute before:top-1/2 before:-translate-y-1/2 ${
-                    swipe
+                  className={`h-[20px] w-9  rounded-2xl relative before:h-4 before:w-4 before:rounded-full before:bg-white before:absolute before:top-1/2 before:-translate-y-1/2 ${swipe
                       ? "before:right-[2px] before:duration-300 bg-blue-600"
                       : "before:left-[2px] before:duration-300 bg-gray-400"
-                  }`}
+                    }`}
                 ></div>
                 <h3 className="font-semibold text-[12px] text-primaryColor">
                   Enable reviews
@@ -504,7 +503,7 @@ const dndSubmit = (e) => {
 
                 <div className="mt-3">
                   <Autocomplete
-                   {...register("group_primary_goal")}
+                    {...register("group_primary_goal")}
                     multiple
                     limitTags={2}
                     id="multiple-limit-tags group_primary_goal"
@@ -552,8 +551,8 @@ const dndSubmit = (e) => {
 
                 <div className="mt-3">
                   <Autocomplete
-                   {...register("group_key_topics")}
-                 
+                    {...register("group_key_topics")}
+
                     className=" "
                     multiple
                     limitTags={2}
@@ -606,7 +605,7 @@ const dndSubmit = (e) => {
             <div className="">
               <FormControl>
                 <RadioGroup
-                 {...register("meeting_format")}
+                  {...register("meeting_format")}
                   row
                   aria-labelledby="demo-row-radio-buttons-group-label"
                   name="row-radio-buttons-group"
@@ -636,26 +635,26 @@ const dndSubmit = (e) => {
             <label htmlFor="hiring_price">Pricing*</label>
             <div className="flex gap-x-3">
               <input
-               
+
                 {...register("hiring_price")}
-             
+
                 type="text"
                 placeholder="Input Price"
                 className="font-normal text-[12px] text-[#1A1A1A] opacity-60 border border-[#A2A2A2] py-2 w-[174px] rounded-[8px] outline-none mt-2 px-2"
-              /> 
-             
+              />
+
               <p className="font-normal text-[12px] text-[#1A1A1A] opacity-60 pt-5">
                 /Hr
               </p>
             </div>
-              {errors.hiring_price && <p className="text-red-500">{errors.hiring_price.message}</p>}
+            {errors.hiring_price && <p className="text-red-500">{errors.hiring_price.message}</p>}
           </div>
 
           <div className="mt-6">
             <label htmlFor="registration_link">Registration link*</label>
             <br />
             <input
-             
+
               {...register("registration_link")}
               type="text"
               placeholder="Paste URL"
