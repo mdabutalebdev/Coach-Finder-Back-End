@@ -237,6 +237,8 @@ console.log(e);
                   {errors.country && <p className="text-red-500">{errors.country.message}</p>}
                 </div>
 
+
+
                 <div className="mt-6">
                   <label htmlFor="city">CITY*</label>
                   <br />
