@@ -20,9 +20,9 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm({ resolver: zodResolver(zodLoginValidation) });
- 
 
-  const onSubmit = async(data) => {
+
+  const onSubmit = async (data) => {
     setLoading(true);
 
     try {
@@ -30,16 +30,21 @@ const Login = () => {
         "/auth/login",
         data,);
       if (response?.data) {
-        console.log(response);
-        localStorage.setItem("authToken", response?.data?.data?.token)
-        Swal.fire({
-          title: response.data.message,
-          icon: "success",
-        });
+        if (response.data.data.user.role == "admin") {
+          localStorage.setItem("authToken", response?.data?.data?.token)
+          Swal.fire({
+            title: response.data.message,
+            icon: "success",
+          });
+          navigate("/dashboard");
+        }
+        else {
+          Swal.fire({
+            title: "Unauthoraized",
+            icon: "error",
+          });
+        }
       }
-
-
-      navigate("/dashboard");
     } catch (err) {
       if (err) {
         Swal.fire({
@@ -56,12 +61,12 @@ const Login = () => {
     } finally {
       setLoading(false);
     }
-  } 
+  }
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
- 
+
   return (
     <div className="container flex flex-col justify-center items-center mt-20">
       <img src={Login_logo} alt="Login_logo" className="" />
