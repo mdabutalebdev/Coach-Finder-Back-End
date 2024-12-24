@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Login_logo from "../assets/log_logo.png";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -24,6 +24,7 @@ const Login = () => {
 
   const onSubmit = async(data) => {
     setLoading(true);
+
     try {
       const response = await axiosInstance.post(
         "/auth/login",
@@ -36,6 +37,7 @@ const Login = () => {
           icon: "success",
         });
       }
+
 
       navigate("/dashboard");
     } catch (err) {
@@ -98,7 +100,11 @@ const Login = () => {
           />
         </div>
         {error && <p className="text-red-500 mt-2">{error}</p>}
-        <button type="submit" className="!px-52 mt-6 bg-BtnColor font-bold text-base text-white py-3 rounded-[8px]" disabled={loading}>
+        <button
+          type="submit"
+          className="!px-52 mt-6 bg-BtnColor font-bold text-base text-white py-3 rounded-[8px]"
+          disabled={loading}
+        >
           {loading ? "Logging in..." : "Login"}
         </button>
       </form>

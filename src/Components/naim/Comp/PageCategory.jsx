@@ -1,10 +1,8 @@
-import React from "react";
 import { useParams } from "react-router-dom";
 import ErrorPage from "./ErrorPage";
 import Sidebar from "./Sidebar";
 import GroupPage from "./GroupPage";
 import Logo from "../../../assets/log_logo.png";
-
 
 const PageCategory = () => {
   const { category } = useParams();
@@ -17,7 +15,6 @@ const PageCategory = () => {
     category == "reviews" ||
     category == "settings" ||
     category == "archive"
-
   ) {
     return (
       <div>

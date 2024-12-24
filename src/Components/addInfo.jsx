@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Plus from "../assets/icon/Plus";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
@@ -19,16 +19,42 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 const zodAddInfoValidation = z.object({
   group_name: z.string().min(3, { message: "Group name is required" }),
-  country: z.string().nonempty({ message: "Country is required" }),
+   
+  country: z
+  .array(z.string().nonempty({ message: "Each industry must be a non-empty string" }))
+  .nonempty({ message: "At least one industry is required" }),
   city: z.string().nonempty({ message: "City is required" }),
-  group_industry: z.string().nonempty({ message: "Industry is required" }),
-  group_primary_goal: z.string().nonempty({ message: "Primary goal is required" }),
+
+  group_industry: z
+  .array(z.string().nonempty({ message: "Each industry must be a non-empty string" }))
+  .nonempty({ message: "At least one industry is required" }),
+
+  group_primary_goal: z
+  .array(z.string().nonempty({ message: "Each industry must be a non-empty string" }))
+  .nonempty({ message: "At least one industry is required" }),
+
+  group_focus_area: z
+  .array(z.string().nonempty({ message: "Each industry must be a non-empty string" }))
+  .nonempty({ message: "At least one industry is required" }),
+  group_key_topics: z
+  .array(z.string().nonempty({ message: "Each industry must be a non-empty string" }))
+  .nonempty({ message: "At least one industry is required" }),
+
   description: z.string().min(10, { message: "Description must be at least 10 characters" }),
   meeting_format: z.enum(["In person", "Virtual", "Hybrid"], {
-    errorMap: () => ({ message: "Please select a valid meeting format" }),
+    errorMap: () => ({ message: "Please choce one options" }),
   }),
   hiring_price: z.string().regex(/^\d+$/, { message: "Price must be a valid number" }),
   registration_link: z.string().url({ message: "Enter a valid URL" }),
+
+
+  group_logo: z
+    .instanceof(File)
+    .refine((file) => file.size > 0, { message: "Logo is required" }),
+
+    group_video: z
+    .instanceof(File)
+    .refine((file) => file.size > 0, { message: "" }),
 })
 const AddInfo = () => {
 
@@ -80,25 +106,26 @@ const AddInfo = () => {
 
   const handleImage = (e) => {
     const file = e.target.files[0];
-    setgroupInfo({ ...groupInfo, group_logo: e.target.files[0] })
+    setfile(file);
+    setgroupInfo({ ...groupInfo, group_logo: e.target.files[0] });
     const imagePath = URL.createObjectURL(file);
-    setimgUrl(imagePath)
-  }
-    console.log(groupInfo);
-    
+    setimgUrl(imagePath);
+  };
+  console.log(groupInfo);
+
   const imgClose = () => {
-    setgroupInfo({ ...groupInfo, group_logo: "" })
-    setimgUrl(false)
-  }
+    setgroupInfo({ ...groupInfo, group_logo: "" });
+    setimgUrl(false);
+  };
 
   const handleVideo = (e) => {
     const file = e.target.files[0];
     console.log(file);
 
-    setgroupInfo({ ...groupInfo, group_video: e.target.files[0] })
+    setgroupInfo({ ...groupInfo, group_video: e.target.files[0] });
     const videoPath = URL.createObjectURL(file);
-    setvideoUrl(videoPath)
-  }
+    setvideoUrl(videoPath);
+  };
 
   const VideoClose = () => {
     setgroupInfo({ ...groupInfo, group_video: "" })
@@ -117,9 +144,9 @@ console.log(e);
     let token = localStorage.getItem("adminAuthToken");
     async function infoFunc() {
       try {
-        const res = await axios.post(
+        const { data: response } = await axios.post(
           "http://77.37.74.82:5000/api/groups/create-group",
-          groupInfo,
+          formData,
           {
             headers: {
               "Content-Type": "application/json",
@@ -127,7 +154,9 @@ console.log(e);
             },
           }
         );
-        let response = await res.data;
+
+        console.log("api respo");
+
         if (response) {
           Swal.fire({
             title: response?.message,
@@ -196,6 +225,7 @@ console.log(e);
                   <label htmlFor="country">COUNTRY*</label>
                   <br />
                   <select
+                    
                     {...register("country")}
                     className="font-normal text-[12px] text-[#1A1A1A] opacity-60 border border-[#A2A2A2] outline-none py-2 px-2 w-[174px] h-[38px] rounded-[8px] mt-2 "
                   >
@@ -235,19 +265,25 @@ console.log(e);
                     </h4>
                   </div>
                 </label>
-                <input   type="file" id="logo" className="hidden" accept="image/*" />
+                <input  {...register("group_logo")}  className="hidden" accept="image/*" />
+                {errors.group_logo && <p className="text-red-500">{errors.group_logo.message}</p>}
 
                 {
-                  imgUrl ?
+                  imgUrl ? (  
                     <div className="w-[100px] h-[80px] border mt-5 relative">
                       <img src={`${imgUrl}`} alt="" className="w-full h-full" />
 
-                      <div onClick={imgClose} className="w-[26px] h-[26px] bg-[#F31A1A] rounded-full flex items-center justify-center  absolute -top-3 -right-3">
-                        <Close className={"!stroke-white !w-[10px] !h-[10px]"} />
-                      </div>
-                    </div> :
-                    false
-                }
+                    <div
+                      onClick={imgClose}
+                      className="w-[26px] h-[26px] bg-[#F31A1A] rounded-full flex items-center justify-center  absolute -top-3 -right-3"
+                    >
+                      <Close className={"!stroke-white !w-[10px] !h-[10px]"} />
+                    </div>
+                  </div>
+                )
+                 : (
+                  false
+                )}
               </div>
 
               <div className="">
@@ -259,28 +295,39 @@ console.log(e);
                     </h4>
                   </div>
                 </label>
-                <input type="file" id="video" className="hidden" onChange={handleVideo} accept="video/*" />
+                <input
+                   {...register("group_video")}
+                  type="file"
+                  id="video"
+                  className="hidden"
+                  onChange={handleVideo}
+                  accept="video/*"
+                />
+                 {errors.group_video && <p className="text-red-500">{errors.group_video.message}</p>}
+                {videoUrl ? (
+                  <div className="w-[100px] h-[80px] border mt-5 relative">
+                    <video src={`${videoUrl}`}></video>
 
-                {
-                  videoUrl ?
-                    <div className="w-[100px] h-[80px] border mt-5 relative">
-                      <video src={`${videoUrl}`}></video>
-
-                      <div onClick={VideoClose} className="w-[26px] h-[26px] bg-[#F31A1A] rounded-full flex items-center justify-center  absolute -top-3 -right-3">
-                        <Close className={"!stroke-white !w-[10px] !h-[10px]"} />
-                      </div>
-                    </div> :
-                    false
-                }
+                    <div
+                      onClick={VideoClose}
+                      className="w-[26px] h-[26px] bg-[#F31A1A] rounded-full flex items-center justify-center  absolute -top-3 -right-3"
+                    >
+                      <Close className={"!stroke-white !w-[10px] !h-[10px]"} />
+                    </div>
+                  </div>
+                ) : (
+                  false
+                )}
               </div>
 
               <div className="flex gap-2 mt-6">
                 <div
                   onClick={reviewsStatus}
-                  className={`h-[20px] w-9  rounded-2xl relative before:h-4 before:w-4 before:rounded-full before:bg-white before:absolute before:top-1/2 before:-translate-y-1/2 ${swipe
+                  className={`h-[20px] w-9  rounded-2xl relative before:h-4 before:w-4 before:rounded-full before:bg-white before:absolute before:top-1/2 before:-translate-y-1/2 ${
+                    swipe
                       ? "before:right-[2px] before:duration-300 bg-blue-600"
                       : "before:left-[2px] before:duration-300 bg-gray-400"
-                    }`}
+                  }`}
                 ></div>
                 <h3 className="font-semibold text-[12px] text-primaryColor">
                   Enable reviews
@@ -304,12 +351,9 @@ console.log(e);
                 <div className="mt-3">
                   <Autocomplete
                     className="!rounded-[8px]"
-                    onChange={(event, newValue) => {
-                      setgroupInfo({ ...groupInfo, group_industry: newValue });
-                    }}
+                    {...register("group_industry")}
                     multiple
                     limitTags={2}
-                    id="multiple-limit-tags group_industry"
                     options={first}
                     getOptionLabel={(option) => option}
                     defaultValue={[]}
@@ -322,6 +366,7 @@ console.log(e);
                     )}
                     sx={{ width: "500px" }}
                   />
+                  {errors.group_industry && <p className="text-red-500">{errors.group_industry.message}</p>}
                 </div>
               </div>
 
@@ -333,13 +378,7 @@ console.log(e);
 
                 <div className="mt-3">
                   <Autocomplete
-                    onChange={(event, newValue) => {
-                      setgroupInfo({
-                        ...groupInfo,
-                        group_primary_goal: newValue,
-                      });
-                    }}
-                    name="group_primary_goal"
+                   {...register("group_primary_goal")}
                     multiple
                     limitTags={2}
                     id="multiple-limit-tags group_primary_goal"
@@ -352,6 +391,7 @@ console.log(e);
                     sx={{ width: "500px" }}
                     className="rounded-3xl outline-none"
                   />
+                  {errors.group_industry && <p className="text-red-500">{errors.group_industry.message}</p>}
                 </div>
               </div>
               {/* ------------------ */}
@@ -362,13 +402,7 @@ console.log(e);
 
                 <div className="mt-3">
                   <Autocomplete
-                    onChange={(event, newValue) => {
-                      setgroupInfo({
-                        ...groupInfo,
-                        group_focus_area: newValue,
-                      });
-                    }}
-                    name="group_focus_area"
+                    {...register("group_focus_area")}
                     multiple
                     limitTags={2}
                     id="multiple-limit-tags group_focus_area"
@@ -380,6 +414,7 @@ console.log(e);
                     )}
                     sx={{ width: "500px" }}
                   />
+                  {errors.group_focus_area && <p className="text-red-500">{errors.group_focus_area.message}</p>}
                 </div>
               </div>
 
@@ -391,13 +426,8 @@ console.log(e);
 
                 <div className="mt-3">
                   <Autocomplete
-                    onChange={(event, newValue) => {
-                      setgroupInfo({
-                        ...groupInfo,
-                        group_key_topics: newValue,
-                      });
-                    }}
-                    name="group_key_topics"
+                   {...register("group_key_topics")}
+                 
                     className=" "
                     multiple
                     limitTags={2}
@@ -414,6 +444,7 @@ console.log(e);
                     )}
                     sx={{ width: "500px" }}
                   />
+                  {errors.group_key_topics && <p className="text-red-500">{errors.group_key_topics.message}</p>}
                 </div>
               </div>
               {/* ---------------------- */}
@@ -494,7 +525,6 @@ console.log(e);
               {errors.hiring_price && <p className="text-red-500">{errors.hiring_price.message}</p>}
           </div>
 
-
           <div className="mt-6">
             <label htmlFor="registration_link">Registration link*</label>
             <br />
@@ -508,7 +538,9 @@ console.log(e);
             {errors.registration_link && <p className="text-red-500">{errors.registration_link.message}</p>}
           </div>
 
-          <button className="mt-10 !py-3 bg-BtnColor font-bold text-base text-white px-6 rounded-[8px]">Create Group</button>
+          <button className="mt-10 !py-3 bg-BtnColor font-bold text-base text-white px-6 rounded-[8px]">
+            Create Group
+          </button>
         </form>
       </div>
     </div>
