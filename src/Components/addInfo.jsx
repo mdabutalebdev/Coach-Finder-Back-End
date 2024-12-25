@@ -17,7 +17,6 @@ const AddInfo = () => {
   const [addInfo, setaddInfo] = useState({});
   const [swipe, setswipe] = useState(false);
   const [logoFile, setlogoFile] = useState(null);
-  const [textFile, settextFile] = useState(null);
   const [videoFile, setvideoFile] = useState("");
   const [imgUrl, setimgUrl] = useState(false);
   const [videoUrl, setvideoUrl] = useState(false);
@@ -147,7 +146,7 @@ const AddInfo = () => {
                 </div>
 
               </label>
-              <input type="file" disabled={textFile} onChange={changeDnd} className="absolute top-0 hidden dndInputFild" id="dnd" accept=".jpg,.jpeg,.png,.svg,.zip" />
+              <input type="file" disabled={imgUrl} onChange={changeDnd} className="absolute top-0 hidden dndInputFild" id="dnd" accept=".jpg,.jpeg,.png,.svg,.zip" />
             </div>
 
             <div className="mt-4 flex flex-col gap-y-4">
@@ -162,7 +161,8 @@ const AddInfo = () => {
                   <h3 className="font-bold text-xs flex flex-col gap-1">
                     {logoFile ? logoFile.name : false}
                     <span className="font-normal text-SecondaryColor">
-                      {logoFile ? logoFile.size / 1024 : false}KB</span>
+                      {logoFile ? logoFile.size / 1024 : false}KB
+                    </span>
                   </h3>
                 </div>
 
@@ -178,7 +178,7 @@ const AddInfo = () => {
               <label htmlFor="url" className="text-[#0B0B0B] text-[18px] leading-[24px] font-bold">Upload from URL</label>
 
               <div className="border border-[#EB3743] rounded-[12px] p-3 flex items-center justify-between gap-4">
-                <input type="text" onChange={(e) => settextFile(e.target.value)} disabled={logoFile} id="url" className={`w-full h-full outline-none`} />
+                <input type="text" onChange={(e) => setimgUrl(e.target.value)} disabled={logoFile} id="url" className={`w-full h-full outline-none`} />
                 <button type="submit" className="bg-BtnColor text-white text-[12px] font-semibold px-4 h-[36px] rounded-[8px]">Upload</button>
               </div>
 
@@ -190,10 +190,6 @@ const AddInfo = () => {
               <div className="flex justify-between">
                 <div className="w-full h-[40px] flex gap-2">
                   <img src={imgUrl ? imgUrl : ""} alt="" className="w-[40px] h-full object-cover" />
-                  <h3 className="font-bold text-xs flex flex-col gap-1">{"groupInfo.group_logo ? groupInfo.group_logo.name : false"}
-                    <span className="font-normal text-SecondaryColor">
-                      {"groupInfo.group_logo ? groupInfo.group_logo.size / 1024 : false"}KB</span>
-                  </h3>
                 </div>
 
                 <Close className={"stroke-[#858585] cursor-pointer"} />
